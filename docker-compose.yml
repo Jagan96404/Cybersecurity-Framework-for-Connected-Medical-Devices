@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: medsentinel-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: medsentinel
+      POSTGRES_PASSWORD: medsentinel_secure_pass_2026
+      POSTGRES_DB: medsentinel_cps
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: medsentinel-backend
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://medsentinel:medsentinel_secure_pass_2026@db:5432/medsentinel_cps
+      SECRET_KEY: medsentinel-cps-super-secure-jwt-secret-key-2026
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: >
+      sh -c "python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: medsentinel-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+

@@ -1,9 +1,12 @@
 import asyncio
+import os
 import json
 from contextlib import asynccontextmanager
 from typing import List
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -93,7 +96,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Enable CORS for all local development origins
+# Enable CORS for all origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -116,19 +119,52 @@ async def websocket_telemetry(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            # Keep connection alive & handle incoming client messages if any
             data = await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
     except Exception:
         manager.disconnect(websocket)
 
-@app.get("/")
-def root():
+@app.get("/health")
+def health_check():
     return {
-        "framework": settings.PROJECT_NAME,
-        "version": settings.VERSION,
-        "status": "Operational",
-        "api_docs": "/docs",
-        "websocket_endpoint": "/ws/telemetry"
+        "status": "healthy",
+        "service": settings.PROJECT_NAME,
+        "version": settings.VERSION
     }
+
+# Check for production frontend build
+frontend_candidates = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../frontend/dist")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/dist")),
+    os.path.abspath(os.path.join(os.getcwd(), "frontend/dist")),
+    os.path.abspath(os.path.join(os.getcwd(), "../frontend/dist"))
+]
+
+frontend_dist = None
+for candidate in frontend_candidates:
+    if os.path.exists(candidate) and os.path.exists(os.path.join(candidate, "index.html")):
+        frontend_dist = candidate
+        break
+
+if frontend_dist and os.path.exists(os.path.join(frontend_dist, "assets")):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        if full_path.startswith("api") or full_path.startswith("ws") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+            return JSONResponse(status_code=404, content={"detail": "Not found"})
+        file_path = os.path.join(frontend_dist, full_path)
+        if full_path and os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))
+else:
+    @app.get("/")
+    def root():
+        return {
+            "framework": settings.PROJECT_NAME,
+            "version": settings.VERSION,
+            "status": "Operational",
+            "api_docs": "/docs",
+            "websocket_endpoint": "/ws/telemetry"
+        }

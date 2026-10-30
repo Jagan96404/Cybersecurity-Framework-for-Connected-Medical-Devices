@@ -28,13 +28,17 @@ jobs:
 
     - name: Seed Database Verification
       working-directory: ./backend
+      env:
+        PYTHONPATH: .
       run: |
         python seed.py
 
     - name: Run Pytest Test Suite
       working-directory: ./backend
+      env:
+        PYTHONPATH: .
       run: |
-        pytest tests/ -v
+        python -m pytest tests/ -v
 
   frontend-build:
     name: Frontend TypeScript & Vite Production Build
@@ -52,7 +56,7 @@ jobs:
 
     - name: Install Frontend Dependencies
       working-directory: ./frontend
-      run: npm ci
+      run: npm ci || npm install
 
     - name: Compile TypeScript & Build Production Bundle
       working-directory: ./frontend

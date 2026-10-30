@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import pytest
 from app.engine.safety_engine import calculate_patient_safety_risk
 from app.engine.anomaly_detector import anomaly_detector
@@ -50,4 +54,3 @@ def test_anomaly_detector_untrusted_endpoint():
     )
     types = [a["anomaly_type"] for a in anomalies]
     assert "Untrusted Endpoint Connection" in types
-

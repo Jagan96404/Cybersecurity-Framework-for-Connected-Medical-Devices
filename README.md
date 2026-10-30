@@ -3,8 +3,22 @@
 ![MedSentinel Banner](https://img.shields.io/badge/System-Cyber--Physical-0284c7?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Compliance-FDA%20IoMT%20Zero--Trust-10b981?style=for-the-badge)
 ![Framework](https://img.shields.io/badge/Stack-FastAPI%20%2B%20React%20%2B%20Tailwind-8b5cf6?style=for-the-badge)
+![GitHub Pages](https://img.shields.io/badge/Deployment-GitHub%20Pages%20Active-emerald?style=for-the-badge)
 
 MedSentinel CPS is a full-stack Cyber-Physical System (CPS) and hospital cybersecurity platform designed to protect connected medical devices (ventilators, infusion pumps, cardiac monitors, insulin pumps, wearables, defibrillators) while strictly guaranteeing **patient safety and treatment continuity**.
+
+---
+
+## 🌐 Live GitHub Pages Deployment
+
+- **Live Web Application**: [https://jagan96404.github.io/MedSentinel-/](https://jagan96404.github.io/MedSentinel-/)
+- **GitHub Repository**: [https://github.com/Jagan96404/MedSentinel-](https://github.com/Jagan96404/MedSentinel-)
+- **Automated Deploy Action**: [https://github.com/Jagan96404/MedSentinel-/actions](https://github.com/Jagan96404/MedSentinel-/actions)
+
+> **To Enable GitHub Pages in Repository Settings:**
+> 1. In your GitHub repository, click **Settings** $\to$ **Pages** (under Code and automation).
+> 2. Under **Build and deployment $\to$ Source**, select **GitHub Actions**.
+> 3. The included workflow `.github/workflows/deploy-pages.yml` will automatically build and publish the live website!
 
 ---
 
@@ -37,10 +51,6 @@ MedSentinel CPS is a full-stack Cyber-Physical System (CPS) and hospital cyberse
 
 ## Quick Start (Local Run)
 
-### Prerequisites:
-- Python 3.10+
-- Node.js 18+ & npm
-
 ### Method 1: One-Click Launch (Windows)
 Double-click `run_dev.bat` or run in PowerShell:
 ```powershell
@@ -66,7 +76,7 @@ cd frontend
 npm install
 npm run dev
 ```
-- Access the platform at: `http://localhost:5173`
+- Access the platform locally at: `http://localhost:5173`
 
 ---
 
@@ -93,16 +103,6 @@ docker-compose up --build
 
 ---
 
-## Simulated Seed Data Overview
-- **25 Medical Devices**: Dräger Evita ventilators, Alaris Medley infusion pumps, Philips IntelliVue cardiac monitors, Medtronic insulin pumps, ZOLL defibrillators, and BioIntelliSense wearables.
-- **15 Clinical Patients**: Detailed diagnoses, departments, rooms, and acute condition states (Stable, Warning, Critical).
-- **20 SBOM Components**: FreeRTOS, OpenSSL, lwIP, mbedTLS, Nordic BLE, BusyBox, etc.
-- **15 Simulated Vulnerabilities**: Realistic CVE records with CVSS scores and clinical patch priorities.
-- **12 Sample Incidents**: Distributed across Open, Investigating, Contained, Resolved, and False Positive stages.
-
----
-
 ## Academic Documentation & Defense
 Detailed architecture, ER diagrams, 12-slide presentation outline, and viva questions are available in:
 [`docs/PROJECT_DOCUMENTATION.md`](docs/PROJECT_DOCUMENTATION.md)
-

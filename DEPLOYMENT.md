@@ -70,3 +70,4 @@ The stack provisions:
 - `medsentinel-frontend`: Nginx serving the React SPA on port `5173` (or port `80`).
 - `medsentinel-backend`: FastAPI on port `8000`.
 - `medsentinel-postgres`: PostgreSQL database with persistent volume storage.
+

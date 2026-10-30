@@ -16,9 +16,6 @@ concurrency:
 
 jobs:
   build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -39,22 +36,26 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      # Target 1: Deploy to gh-pages branch (for "Deploy from a branch" setting)
+      # Method 1: Deploy directly to gh-pages branch (works automatically on any repo)
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend/dist
+          commit_message: "Automated deployment to GitHub Pages"
 
-      # Target 2: Deploy to GitHub Pages Artifact (for "GitHub Actions" setting)
+      # Method 2: Deploy to GitHub Pages via Actions artifact
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        continue-on-error: true
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
+        continue-on-error: true
         with:
           path: './frontend/dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
